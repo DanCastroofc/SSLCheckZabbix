@@ -1,0 +1,45 @@
+zabbix_export:
+  version: '6.0'
+  date: '2023-06-30T20:17:19Z'
+  groups:
+    -
+      uuid: 7df96b18c230490a9a0a9e2307226338
+      name: Templates
+  templates:
+    -
+      uuid: d949dd3f8a354aca87127d091e2acb64
+      template: 'SSL Check'
+      name: 'SSL Check'
+      description: |
+        Created By: Daniel Castro https://github.com/DanCastroofc
+        
+        https://github.com/DanCastroofc/SSLCheckZabbix
+      groups:
+        -
+          name: Templates
+      items:
+        -
+          uuid: b496eebb37a545f990dd5ef01588a358
+          name: 'SSL Expiration Check {HOST.NAME}'
+          key: 'system.run[/opt/checkssl.sh {$SSL_HOST}]'
+          delay: 1d
+          description: 'Edite a chave com o domínio a ser checado'
+          tags:
+            -
+              tag: Application
+              value: SSL
+          triggers:
+            -
+              uuid: 9e85f88be7d3400e88795dd11c80ecaf
+              expression: 'last(/SSL Check/system.run[/opt/checkssl.sh {$SSL_HOST}])<=10'
+              name: 'Certificado SSL de {HOST.NAME}  prestes a vencer.'
+              priority: WARNING
+            -
+              uuid: 4f48fc1349174713bab068158f295c66
+              expression: 'nodata(/SSL Check/system.run[/opt/checkssl.sh {$SSL_HOST}],26s)=0'
+              name: 'Sem dados dos certificados SSL em {HOST.NAME}'
+              priority: WARNING
+      macros:
+        -
+          macro: '{$SSL_HOST}'
+          description: 'IP or DNS to be monitored'
