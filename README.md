@@ -11,56 +11,49 @@ Este documento descreve como utilizar o script de monitoramento de certificados 
 ## Passo 1: Preparação
 
 1. Faça o download do script de monitoramento de certificados SSL. Você pode salvá-lo em qualquer diretório em seu servidor Zabbix.
-
+  
 2. Torne o script executável com o seguinte comando:
-   ```
-   chmod +x nome_do_script.sh
-   ```
+  
+  ```
+  chmod +x nome_do_script.sh
+  ```
+  
 
-## Passo 2: Configuração no Zabbix
+##Passo 2: Configuração no Zabbix
 
-1. Faça login na interface web do Zabbix.
-
-2. Acesse a seção "Configuration" e clique em "Templates".
-
-3. Clique em "Create template" para criar uma nova template.
-
-4. Defina um nome para a template, por exemplo, "Monitoramento SSL".
-
-5. Na guia "Items", clique em "Create item" para adicionar um novo item à template.
-
-6. Preencha os seguintes campos:
-   - Name: Nome do item (por exemplo, "Validade do Certificado SSL").
-   - Type: Selecione "External check".
-   - Key: Caminho completo para o script de monitoramento (por exemplo, "/caminho/para/o/script.sh {HOST.DNS}").
-   - Type of information: Selecione "Numeric (unsigned)".
-   - Update interval: Defina o intervalo de atualização desejado para o monitoramento.
-   - Applications: Selecione ou crie uma aplicação relevante para o monitoramento.
-
-7. Na guia "Triggers", você pode adicionar gatilhos para alertas com base nos valores obtidos pelo script. Por exemplo, você pode configurar um gatilho para disparar um alerta quando a validade do certificado for menor que 30 dias.
-
-8. Clique em "Add" para adicionar a template.
+1. Faça o download da template `SSL_Check_Template.yaml`.
+2. Faça login na interface web do Zabbix.
+3. Acesse a seção "Configuration" e clique em "Templates".
+4. Clique em "Importar" e selecione a template baixada.
+  
 
 ## Passo 3: Associação ao Host
 
 1. Acesse a seção "Configuration" e clique em "Hosts".
-
 2. Selecione o host ao qual deseja associar a template.
-
 3. Na guia "Templates", clique em "Link new templates".
-
-4. Selecione a template "Monitoramento SSL" (ou o nome que você atribuiu) e clique em "Select".
-
+4. Selecione a template "SSL Check" e clique em "Select".
 5. Clique em "Add" para associar a template ao host.
+6. Clique na aba "Macros".
+7. Clique em "Macros herdados e do Host".
+8. Procure pela macro `{$SSL_HOST}` e clique em "Modificar".
+9. Agora volte para a aba "Macros de Host".
+10. No campo "Valor" da macro `{$SSL_HOST}`, digite o DNS do site que deseja monitorar.
+  
+  - Exemplo: www.meu-site.com.br
+11. Clique em "Atualizar".
+  
 
 ## Testando o Monitoramento
 
 Após a configuração, o Zabbix começará a executar o script de monitoramento nos servidores remotos de acordo com o intervalo definido. Os valores obtidos pelo script serão registrados e poderão ser visualizados nos gráficos e gatilhos configurados.
 
 Para testar manualmente o script de monitoramento, você pode executá-lo no servidor Zabbix com o seguinte comando:
+
 ```
-./nome_do_script.sh nome_do_servidor
+./checkssl.sh nome_do_servidor
 ```
+
 Substitua "nome_do_script.sh" pelo nome do seu script e "nome_do_servidor" pelo endereço do servidor que deseja verificar.
 
 ## Conclusão
